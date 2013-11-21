@@ -32,7 +32,7 @@ class TraktCLI < Thor
   end
 
   desc "list USERNAME", "List all tracking shows for USERNAME"
-  def list_tracking_shows(username)
+  def list_shows(username)
     puts "Listing all tracking shows for user #{username}"
 
     shows = Trakt.get("/user/library/shows/watched.json/#{@api_key}/#{username}")
@@ -42,6 +42,24 @@ class TraktCLI < Thor
     end
   end
 
+  desc "upcoming USERNAME", "List all upcoming shows for USERNAME"
+  def upcoming(username)
+    puts "Listing upcoming shows"
+
+    calendar = Trakt.get("/user/calendar/shows.json/#{@api_key}/#{username}")
+    calendar.each do |termin|
+      print "\n"
+      print termin["date"] + "\n"
+      
+      termin["episodes"].each do |show|
+        print show["show"]["title"] + " - S"
+        print show["episode"]["season"]
+        print "E"
+        print show["episode"]["number"] 
+        print "\n"
+      end
+    end
+  end
 end
  
 TraktCLI.start(ARGV)
