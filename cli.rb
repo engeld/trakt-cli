@@ -5,6 +5,7 @@ require "httparty"
 require "pp"
 require "json"
 require "yaml" 
+require "active_support/all"
 
 class Trakt
   include HTTParty
@@ -52,10 +53,14 @@ class TraktCLI < Thor
       print termin["date"] + "\n"
       
       termin["episodes"].each do |show|
-        print show["show"]["title"] + " - S"
+        time = show["episode"]["first_aired_utc"]
+        time_localized = Time.at(time).in_time_zone("Europe/Zurich").strftime("%d.%m.%Y %H:%M")
+
+        print time_localized
+        print " " + show["show"]["title"] + " - S"
         print show["episode"]["season"]
         print "E"
-        print show["episode"]["number"] 
+        print show["episode"]["number"]
         print "\n"
       end
     end
