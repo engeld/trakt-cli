@@ -38,16 +38,19 @@ class TraktCLI < Thor
 
     shows = Trakt.get("/user/library/shows/watched.json/#{@api_key}/#{username}")
     shows.each do |show|
-      print "\n"
-      print show["title"]
+      puts show["title"]
     end
   end
 
   desc "upcoming USERNAME", "List all upcoming shows for USERNAME"
+  option :today, :aliases => :t
   def upcoming(username)
     puts "Listing upcoming shows"
 
-    calendar = Trakt.get("/user/calendar/shows.json/#{@api_key}/#{username}")
+    calendar_path = "/user/calendar/shows.json"
+    calendar_path = options[:today] ? calendar_path + "/#{@api_key}/#{username}/today/1" : calendar_path + "/#{@api_key}/#{username}"
+
+    calendar = Trakt.get(calendar_path)
     calendar.each do |termin|
       print "\n"
       print termin["date"] + "\n"
